@@ -23,26 +23,17 @@ import {
   DebugInstructions,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import SafeViewAndroid from "./globalStyle";
 
-const App: () => React$Node = () => {
+const App= () => {
   return (
     <>
       <StatusBar barStyle="dark-content" />
-      <SafeAreaView>
-        <ScrollView
-          contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
-          <Header />
-          {global.HermesInternal == null ? null : (
-            <View style={styles.engine}>
-              <Text style={styles.footer}>Engine: Hermes</Text>
-            </View>
-          )}
+      <SafeAreaView style={SafeViewAndroid.AndroidSafeArea}>        
            <View style={styles.engine}>
-           <Text style={styles.footer}>Engine: Hermes</Text>
+           <Text >Engine: Herme8s</Text>
+           <Text style={{color:'black'}}>Engine: Hermes</Text>
            </View>
-
-         </ScrollView>
       </SafeAreaView>
     </>
   );
@@ -53,8 +44,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lighter,
   },
   engine: {
-    position: 'absolute',
-    right: 0,
+    flex:1,
+    justifyContent:'center',
+    alignItems:'center'
+    //position: 'absolute',
+    //right: 0,
   },
   body: {
     backgroundColor: Colors.white,
