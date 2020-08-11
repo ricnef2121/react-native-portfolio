@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState,useRef } from 'react';
 import { FlatList, StyleSheet, View, Text, SafeAreaView, Button, Dimensions, Image, NetInfo } from 'react-native'
 import SafeViewAndroid from "../utils/globalStyle";
 import Header from '../Components/Header';
@@ -39,46 +39,73 @@ const DATA = [
 
 const numColums = 3;
 const WIDTH = Dimensions.get('window').width;
+//const screen = Dimensions.get("screen");
 
 const Home = ({ navigation }) => {
+    // const [dimensions, setDimensions] = useState(screen.height);
+    // const onChange = ( screen ) => {
+    //     console.log(screen)
+    //     setDimensions( screen.height);
+    //   };
+    
+    // const refContainer = useRef();
+
     const [state, setstate] = useState({});
     const [newobj, setRes] = useState([]);
 
+    const [refresh, setrefresh] = useState(false);
+
+    const scrollToEnd =(v={}) =>{
+        console.log(v)
+        refContainer.current.scrollToEnd()
+        return console.log('scrolling')
+    }
+
+    const handlerefresh = (event)=>{       
+        setrefresh(true)
+        console.log('refresh')
+        return setrefresh(false)
+    }
+
     useEffect(() => {
+        
+        // Dimensions.addEventListener("change", onChange);
+       
 
-        const addResults = (res) => {
-            let size = res.length;
-            let c = []
-            res.forEach(element => {
-                let nu = 0
-                let ele = { ...element }
+        // const addResults = (res) => {
+        //     let size = res.length;
+        //     let c = []
+        //     res.forEach(element => {
+        //         let nu = 0
+        //         let ele = { ...element }
 
-                return fetch(element.url)
-                    .then((response) => response.json())
-                    .then((json2) => {
-                        //console.log(json2.sprites.front_default)
-                        ele.img = json2.sprites.front_default;
-                        //console.log({[json2.id]:[ele]})
-                        ele.id = json2.id;
-                        //element.a = json2.id;
-                        c.push(ele)
-                        if (c.length == size) {
-                            setRes(c)
-                        }
-                    })
+        //         return fetch(element.url)
+        //             .then((response) => response.json())
+        //             .then((json2) => {
+        //                 //console.log(json2.sprites.front_default)
+        //                 ele.img = json2.sprites.front_default;
+        //                 //console.log({[json2.id]:[ele]})
+        //                 ele.id = json2.id;
+        //                 //element.a = json2.id;
+        //                 c.push(ele)
+        //                 if (c.length == size) {
+        //                     setRes(c)
+        //                 }
+        //             })
 
-            });
+        //     });
 
 
-            return 's'
-        }
+        //     return 's'
+        // }
 
-        let updateState = async (st) => {
-            console.log(st, '--------------------')
-            return await setstate(st)
-        }
+        // let updateState = async (st) => {
+        //     console.log(st, '--------------------')
+        //     return await setstate(st)
+        // }
 
         const getMoviesFromApi = () => {
+            //debugger;
             return fetch('https://pokeapi.co/api/v2/pokemon?limit=21')
                 .then((response) => response.json())
                 .then((json1) => {
@@ -124,11 +151,12 @@ const Home = ({ navigation }) => {
         };
         getMoviesFromApi()
 
-        return () => (getMoviesFromApi())
+        
+        return () => {
+            getMoviesFromApi()
+           // Dimensions.removeEventListener("change", onChange);
+          };
     }, [])
-
-
-
 
 
     let formData = (dataList, numColums) => {
@@ -150,7 +178,7 @@ const Home = ({ navigation }) => {
                 }
             }
         }
-        console.log(newData, 'hdp')
+        //console.log(newData, 'hdp')
         dataList =newData;
 
         while (totalLastRow !== 0 && totalLastRow !== numColums) {
@@ -194,10 +222,15 @@ const Home = ({ navigation }) => {
                 <Header />
                 {state.results !== null && state.results !== undefined ? <FlatList
                     data={formData(state.results, numColums)}
-                    //data={state.results}
+                    //ref={refContainer}
+                    //onContentSizeChange={(contentWidth, contentHeight)=> console.log('scrool',contentHeight,'scrool',refContainer.current)}
+                    refreshing={refresh}
+                    onEndReachedThreshold ={0.3}
+                    onEndReached={()=>{ console.log('onEndReached')}}
                     renderItem={_renderItem}
                     keyExtractor={(item) => item.id}
                     numColumns={numColums}
+                    onRefresh={()=> handlerefresh()}
                 /> : null}
             </View>
         </SafeAreaView>
