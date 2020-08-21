@@ -26,7 +26,7 @@ import {
 import SafeViewAndroid from "./src/utils/globalStyle";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import WrapperContext from './src/Components/Context/WrapperContext'
 //Screens
 import Home from './src/Screens/Home';
 import DetailsPokemon from './DetailsPokemon';
@@ -34,15 +34,17 @@ const Stack = createStackNavigator();
 
 const App = () => {
     return (
-        <NavigationContainer>
-            <Stack.Navigator
-                screenOptions={{
-                    headerShown: false
-                }}>
-                <Stack.Screen name="home" component={Home}/>
-                <Stack.Screen name="detailsPokemon" component={DetailsPokemon}/>
-            </Stack.Navigator>
-        </NavigationContainer>
+        <WrapperContext>
+            <NavigationContainer>
+                <Stack.Navigator
+                    screenOptions={{
+                        headerShown: false
+                    }}>
+                    <Stack.Screen name="home" component={Home} />
+                    <Stack.Screen name="detailsPokemon" component={DetailsPokemon} />
+                </Stack.Navigator>
+            </NavigationContainer>
+        </WrapperContext>
     );
 };
 

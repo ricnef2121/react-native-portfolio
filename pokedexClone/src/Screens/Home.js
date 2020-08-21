@@ -42,23 +42,17 @@ const WIDTH = Dimensions.get('window').width;
 //const screen = Dimensions.get("screen");
 
 const Home = ({ navigation }) => {
-    // const [dimensions, setDimensions] = useState(screen.height);
-    // const onChange = ( screen ) => {
-    //     console.log(screen)
-    //     setDimensions( screen.height);
-    //   };
     
-    // const refContainer = useRef();
 
     const [state, setstate] = useState({});
-    const [newobj, setRes] = useState([]);
+    const [offset,setoffset] = useState(0);
+    //const [newobj, setRes] = useState([]);
 
     const [refresh, setrefresh] = useState(false);
 
-    const scrollToEnd =(v={}) =>{
-        console.log(v)
-        refContainer.current.scrollToEnd()
-        return console.log('scrolling')
+    const scrollToEnd =() =>{
+        console.log('scroll')
+        
     }
 
     const handlerefresh = (event)=>{       
@@ -69,51 +63,15 @@ const Home = ({ navigation }) => {
 
     useEffect(() => {
         
-        // Dimensions.addEventListener("change", onChange);
-       
-
-        // const addResults = (res) => {
-        //     let size = res.length;
-        //     let c = []
-        //     res.forEach(element => {
-        //         let nu = 0
-        //         let ele = { ...element }
-
-        //         return fetch(element.url)
-        //             .then((response) => response.json())
-        //             .then((json2) => {
-        //                 //console.log(json2.sprites.front_default)
-        //                 ele.img = json2.sprites.front_default;
-        //                 //console.log({[json2.id]:[ele]})
-        //                 ele.id = json2.id;
-        //                 //element.a = json2.id;
-        //                 c.push(ele)
-        //                 if (c.length == size) {
-        //                     setRes(c)
-        //                 }
-        //             })
-
-        //     });
-
-
-        //     return 's'
-        // }
-
-        // let updateState = async (st) => {
-        //     console.log(st, '--------------------')
-        //     return await setstate(st)
-        // }
-
         const getMoviesFromApi = () => {
             //debugger;
-            return fetch('https://pokeapi.co/api/v2/pokemon?limit=21')
+            return fetch('https://pokeapi.co/api/v2/pokemon?limit=21&offset=0')
                 .then((response) => response.json())
                 .then((json1) => {
-                    var res = json1;
+                    var res = json1;                   
                     var w = []
                     for (let index = 0; index < res.results.length; index++) {
                         let url = res.results[index].url
-
                         fetch(url, {
                             method: 'GET',
                             headers: {
@@ -149,6 +107,7 @@ const Home = ({ navigation }) => {
                     console.error(error);
                 });
         };
+
         getMoviesFromApi()
 
         
@@ -162,35 +121,46 @@ const Home = ({ navigation }) => {
     let formData = (dataList, numColums) => {
         const totalRows = Math.floor(dataList.length / numColums);
         let totalLastRow = dataList.length - (totalRows * numColums)
-        //debugger;
         let newData = [];
+        let mayor =[]
         if (newData.length < 1) {
-            for (let ind = 1; ind <= dataList.length; ind++) {
-                for (let ind2 = 0; ind2 < dataList.length; ind2++) {
-                    if (dataList[ind2].id == ind) {
-                       // newData.push(dataList[ind2])
-                        newData = [...newData, dataList[ind2]]
-                        //console.log( ind,dataList[ind2].id)
-                    }
-                    else {
-                        // console.log( ind,dataList[ind2].id)
-                    }
-                }
-            }
+            let re = dataList.sort((a,b)=> (a.id > b.id) ? 1 : ((b.id > a.id) ? -1 : 0))
+            newData=[...newData,re]
+            // for (let ind = 1; ind <= dataList.length; ind++) {
+            //     //dataList[ind2].id
+
+            //     // let ind2=ind -1
+            //     // console.log(dataList.sort(),'sort')
+            //     // if(dataList[ind2].id > 10){
+            //     //     mayor = [...mayor, dataList[ind2]]
+            //     // }
+            //     // if(dataList[ind2].id == ind){
+            //     //   newData = [...newData, dataList[ind2]]
+            //     // }
+            //     // for (let ind2 = 0; ind2 < dataList.length; ind2++) {
+            //     //     if (dataList[ind2].id == ind) {                       
+            //     //         newData = [...newData, dataList[ind2]]                        
+            //     //     }
+            //     //     else {
+            //     //         // console.log( ind,dataList[ind2].id)
+            //     //     }
+            //     // }
+            // }
         }
         //console.log(newData, 'hdp')
         dataList =newData;
+        ///dconsole.log(dataList)
 
-        while (totalLastRow !== 0 && totalLastRow !== numColums) {
-            dataList.push({
-                id: dataList.length + 1,
-                empty: true,
-                name: 'blank',
-            })
-            totalLastRow++
-        }
-        ///console.log(dataList)
-        return dataList;
+        // while (totalLastRow !== 0 && totalLastRow !== numColums) {
+        //     dataList.push({
+        //         id: dataList.length + 1,
+        //         empty: true,
+        //         name: 'blank',
+        //     })
+        //     totalLastRow++
+        // }
+        console.log(dataList)
+        return dataList[0];
     }
 
     let _renderItem = ({ item, index }) => {
@@ -226,7 +196,7 @@ const Home = ({ navigation }) => {
                     //onContentSizeChange={(contentWidth, contentHeight)=> console.log('scrool',contentHeight,'scrool',refContainer.current)}
                     refreshing={refresh}
                     onEndReachedThreshold ={0.3}
-                    onEndReached={()=>{ console.log('onEndReached')}}
+                    onEndReached={()=>{ scrollToEnd()}}
                     renderItem={_renderItem}
                     keyExtractor={(item) => item.id}
                     numColumns={numColums}
